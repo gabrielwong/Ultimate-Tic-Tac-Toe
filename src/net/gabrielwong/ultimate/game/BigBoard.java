@@ -26,7 +26,7 @@ public class BigBoard extends Board {
 	 * Creates an empty BigBoard.
 	 */
 	public BigBoard(){
-		smallBoards = new Board[N_SQUARES];
+		smallBoards = new Board[SIDE_LENGTH * SIDE_LENGTH];
 		for (int i = 0; i < smallBoards.length; i++){
 			smallBoards[i] = new Board();
 		}
@@ -38,7 +38,7 @@ public class BigBoard extends Board {
 	 * @param b the BigBoard to be cloned
 	 */
 	public BigBoard(BigBoard b){
-		smallBoards = new Board[N_SQUARES];
+		smallBoards = new Board[SIDE_LENGTH * SIDE_LENGTH];
 		for (int i = 0; i < smallBoards.length; i++){
 			smallBoards[i] = new Board(b.getSmallBoard(i));
 		}
