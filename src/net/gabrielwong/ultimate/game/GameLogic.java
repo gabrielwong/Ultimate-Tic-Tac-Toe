@@ -1,12 +1,54 @@
 package net.gabrielwong.ultimate.game;
 
+import java.util.ArrayList;
+
+import net.gabrielwong.ultimate.game.message.MoveEvent;
+import net.gabrielwong.ultimate.game.message.MoveListener;
+import net.gabrielwong.ultimate.game.message.StateChangeListener;
+
 /**
  * Performs all the logic for the game.
  * @author Gabriel
  *
  */
-public class GameLogic {
+public class GameLogic implements MoveListener{
 	private GameState state;
+	private ArrayList<StateChangeListener> stateChangeListeners;
+	
+	public GameLogic(){
+		state = new GameState();
+		stateChangeListeners = new ArrayList<StateChangeListener>();
+	}
+	
+	public void movePerformed(MoveEvent evt){
+		final Move move = evt.getMove();
+		
+		// To avoid hanging any event dispatch threads
+		Thread thread = new Thread(){
+			public void run(){
+				processMove(move);
+			}
+		};
+		thread.start();
+	}
+	
+	private void processMove(Move move){
+		Status status = doMove(move);
+		switch(status){
+		case PLAYABLE:
+			break;
+		case TIE:
+			break;
+		case PLAYER_ZERO:
+			break;
+		case PLAYER_ONE:
+			break;
+		}
+	}
+	
+	public void addStateChangeListener(StateChangeListener listener){
+		stateChangeListeners.add(listener);
+	}
 	
 	/**
 	 * Performs the move specified.
@@ -147,28 +189,12 @@ public class GameLogic {
 	}
 	
 	/**
-	 * Makes it the next player's turn.
-	 */
-	private void alternateTurn(){
-		state.setPlayerId((state.getPlayerId() + 1) % 2);
-	}
-	
-	/**
-	 * Returns the Status that represents a piece played by the specified player.
-	 * @param playerId The player who played the piece.
-	 * @return A representation of the player's piece.
-	 */
-	private Status getPlayerPiece(int playerId){
-		return playerId == 0 ? Status.PLAYER_ZERO : Status.PLAYER_ONE;
-	}
-	
-	/**
 	 * Returns an index to be used in Board for the given row and column of the board.
 	 * @param row
 	 * @param col
 	 * @return
 	 */
-	public int getIndex(int row, int col){
+	public static int getIndex(int row, int col){
 		return row * Board.SIDE_LENGTH + col;
 	}
 	
@@ -177,7 +203,7 @@ public class GameLogic {
 	 * @param index
 	 * @return
 	 */
-	public int getRow(int index){
+	public static int getRow(int index){
 		return index / Board.SIDE_LENGTH;
 	}
 	
@@ -186,16 +212,8 @@ public class GameLogic {
 	 * @param index
 	 * @return
 	 */
-	public int getCol(int index){
+	public static int getCol(int index){
 		return index % Board.SIDE_LENGTH;
-	}
-	
-	/**
-	 * Set the game state to something else.
-	 * @param state
-	 */
-	public void setGameState(GameState state){
-		this.state = state;
 	}
 	
 	/**
@@ -205,7 +223,31 @@ public class GameLogic {
 	public GameState getGameState(){
 		return state;
 	}
+
+	/**
+	 * Set the game state to something else.
+	 * @param state
+	 */
+	public void setGameState(GameState state){
+		this.state = state;
+	}
 	
+	/**
+	 * Makes it the next player's turn.
+	 */
+	private void alternateTurn(){
+		state.setPlayerId((state.getPlayerId() + 1) % 2);
+	}
+
+	/**
+	 * Returns the Status that represents a piece played by the specified player.
+	 * @param playerId The player who played the piece.
+	 * @return A representation of the player's piece.
+	 */
+	private static Status getPlayerPiece(int playerId){
+		return playerId == 0 ? Status.PLAYER_ZERO : Status.PLAYER_ONE;
+	}
+
 	/**
 	 * Puts a piece on the board and increments the piece count.
 	 * @param board The board to put the piece on.
