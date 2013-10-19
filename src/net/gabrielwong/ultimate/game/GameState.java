@@ -8,13 +8,16 @@ package net.gabrielwong.ultimate.game;
  */
 public class GameState {
 	private BigBoard board;
-	int currentTurnPlayerId = 0;
+	boolean currentTurnPlayerId;
+	Status status;
 	
 	/**
 	 * Construct the state of a new game.
 	 */
 	public GameState(){
 		board = new BigBoard();
+		currentTurnPlayerId = false;
+		status = Status.PLAYABLE;
 	}
 	
 	
@@ -25,6 +28,7 @@ public class GameState {
 	public GameState(GameState state){
 		board = new BigBoard(state.getBoard());
 		setPlayerId(state.getPlayerId());
+		setStatus(state.getStatus());
 	}
 	
 	/**
@@ -32,7 +36,7 @@ public class GameState {
 	 * @return
 	 */
 	public int getPlayerId(){
-		return currentTurnPlayerId;
+		return currentTurnPlayerId ? 1 : 0;
 	}
 	
 	/**
@@ -40,7 +44,7 @@ public class GameState {
 	 * @param id
 	 */
 	public void setPlayerId(int id){
-		currentTurnPlayerId = id;
+		currentTurnPlayerId = id != 0;
 	}
 	
 	/**
@@ -57,5 +61,21 @@ public class GameState {
 	 */
 	public void setBoard(BigBoard bigBoard){
 		this.board = bigBoard;
+	}
+	
+	/**
+	 * Returns the game's status (win, tie, incomplete).
+	 * @return
+	 */
+	public Status getStatus(){
+		return status;
+	}
+	
+	/**
+	 * Sets the game's status.
+	 * @param status
+	 */
+	public void setStatus(Status status){
+		this.status = status;
 	}
 }

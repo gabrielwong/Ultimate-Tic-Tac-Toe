@@ -1,4 +1,4 @@
-package net.gabrielwong.ultimate.game.message;
+package net.gabrielwong.ultimate.game.event;
 
 import net.gabrielwong.ultimate.game.Move;
 

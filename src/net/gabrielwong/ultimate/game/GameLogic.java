@@ -2,9 +2,10 @@ package net.gabrielwong.ultimate.game;
 
 import java.util.ArrayList;
 
-import net.gabrielwong.ultimate.game.message.MoveEvent;
-import net.gabrielwong.ultimate.game.message.MoveListener;
-import net.gabrielwong.ultimate.game.message.StateChangeListener;
+import net.gabrielwong.ultimate.game.event.MoveEvent;
+import net.gabrielwong.ultimate.game.event.MoveListener;
+import net.gabrielwong.ultimate.game.event.StateChangeEvent;
+import net.gabrielwong.ultimate.game.event.StateChangeListener;
 
 /**
  * Performs all the logic for the game.
@@ -20,6 +21,7 @@ public class GameLogic implements MoveListener{
 		stateChangeListeners = new ArrayList<StateChangeListener>();
 	}
 	
+	@Override
 	public void movePerformed(MoveEvent evt){
 		final Move move = evt.getMove();
 		
@@ -32,22 +34,41 @@ public class GameLogic implements MoveListener{
 		thread.start();
 	}
 	
+	/**
+	 * Called in response to a move event.
+	 * @param move
+	 */
 	private void processMove(Move move){
 		Status status = doMove(move);
-		switch(status){
-		case PLAYABLE:
-			break;
-		case TIE:
-			break;
-		case PLAYER_ZERO:
-			break;
-		case PLAYER_ONE:
-			break;
-		}
+		state.setStatus(status);
+		sendStateChangeEvent();
 	}
 	
+	/**
+	 * Adds the state change listener. The listener will be notified whenever there is an update to the game state.
+	 * @param listener
+	 */
 	public void addStateChangeListener(StateChangeListener listener){
-		stateChangeListeners.add(listener);
+		if (stateChangeListeners.indexOf(listener) != -1)
+			stateChangeListeners.add(listener);
+	}
+	
+	/**
+	 * Removes the listener given.
+	 * @param listener
+	 */
+	public void removeStateChangeListener(StateChangeListener listener){
+		stateChangeListeners.remove(listener);
+	}
+	
+	/**
+	 * Sends the new GameState to all StateChangeListener
+	 */
+	private void sendStateChangeEvent(){
+		StateChangeEvent evt = new StateChangeEvent(new GameState(state)); // Clone of the state
+		for (StateChangeListener listener : stateChangeListeners){
+			listener.stateChanged(evt);
+		}
 	}
 	
 	/**
@@ -55,7 +76,7 @@ public class GameLogic implements MoveListener{
 	 * @param move The move that was performed.
 	 * @return The condition of the game after the move. Null if the move is invalid.
 	 */
-	public Status doMove(Move move){
+	private Status doMove(Move move){
 		// Check validity
 		if (!isValidMove(move))
 			return null;
@@ -130,6 +151,7 @@ public class GameLogic implements MoveListener{
 		int row = getRow(pos);
 		int col = getCol(pos);
 		
+		// Check for a win
 		if (status == Status.PLAYER_ZERO || status == Status.PLAYER_ONE){
 			// Check row
 			for (int i = 0; i < Board.SIDE_LENGTH; i++){
