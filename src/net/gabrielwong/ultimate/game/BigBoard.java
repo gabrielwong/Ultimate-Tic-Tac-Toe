@@ -42,7 +42,7 @@ public class BigBoard extends Board {
 		for (int i = 0; i < smallBoards.length; i++){
 			smallBoards[i] = new Board(b.getSmallBoard(i));
 		}
-		this.activeBoard = b.activeBoard;
+		setActiveBoard(b.getActiveBoard());
 	}
 	
 	/**
@@ -85,6 +85,6 @@ public class BigBoard extends Board {
 	 * @return
 	 */
 	public boolean hasActiveBoard(){
-		return activeBoard != NO_ACTIVE_BOARD;
+		return getActiveBoard() != NO_ACTIVE_BOARD;
 	}
 }

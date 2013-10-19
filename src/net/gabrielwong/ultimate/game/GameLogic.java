@@ -10,7 +10,7 @@ public class GameLogic {
 	
 	/**
 	 * Performs the move specified.
-	 * @param move
+	 * @param move The move that was performed.
 	 * @return The condition of the game after the move. Null if the move is invalid.
 	 */
 	public Status doMove(Move move){
@@ -24,6 +24,7 @@ public class GameLogic {
 		// Place the piece
 		Status piece = getPlayerPiece(move.getPlayerId());
 		placePiece(sBoard, move.getSmallIndex(), piece);
+		alternateTurn();
 		
 		Status status = checkBoard(sBoard, move.getSmallIndex(), piece);
 		// A miniboard was won or full
@@ -62,7 +63,7 @@ public class GameLogic {
 		int bigIndex = move.getBigIndex();
 		
 		// The mini-board is already won or full
-		if (!(board.getStatus(bigIndex) == Status.PLAYABLE))
+		if (board.getStatus(bigIndex) != Status.PLAYABLE)
 			return false;
 		
 		// Player played on the wrong mini-board
@@ -88,7 +89,7 @@ public class GameLogic {
 		int col = getCol(pos);
 		
 		if (status == Status.PLAYER_ZERO || status == Status.PLAYER_ONE){
-			// Check rows
+			// Check row
 			for (int i = 0; i < Board.SIDE_LENGTH; i++){
 				int index = getIndex(row, i);
 				if (board.getStatus(index) != status) // Not a win
@@ -97,9 +98,9 @@ public class GameLogic {
 					return status;
 			}
 			
-			// Check columns
+			// Check column
 			for (int i = 0; i < Board.SIDE_LENGTH; i++){
-				int index = getIndex(col, i);
+				int index = getIndex(i, col);
 				if (board.getStatus(index) != status) // Not a win
 					break;
 				if (i == Board.SIDE_LENGTH - 1)
@@ -145,22 +146,72 @@ public class GameLogic {
 		return state.getPlayerId() == playerId;
 	}
 	
+	/**
+	 * Makes it the next player's turn.
+	 */
+	private void alternateTurn(){
+		state.setPlayerId((state.getPlayerId() + 1) % 2);
+	}
+	
+	/**
+	 * Returns the Status that represents a piece played by the specified player.
+	 * @param playerId The player who played the piece.
+	 * @return A representation of the player's piece.
+	 */
 	private Status getPlayerPiece(int playerId){
 		return playerId == 0 ? Status.PLAYER_ZERO : Status.PLAYER_ONE;
 	}
 	
+	/**
+	 * Returns an index to be used in Board for the given row and column of the board.
+	 * @param row
+	 * @param col
+	 * @return
+	 */
 	public int getIndex(int row, int col){
 		return row * Board.SIDE_LENGTH + col;
 	}
 	
+	/**
+	 * Returns the row that a board index points to.
+	 * @param index
+	 * @return
+	 */
 	public int getRow(int index){
 		return index / Board.SIDE_LENGTH;
 	}
 	
+	/**
+	 * Returns the column that a board index points to.
+	 * @param index
+	 * @return
+	 */
 	public int getCol(int index){
 		return index % Board.SIDE_LENGTH;
 	}
 	
+	/**
+	 * Set the game state to something else.
+	 * @param state
+	 */
+	public void setGameState(GameState state){
+		this.state = state;
+	}
+	
+	/**
+	 * Returns the state.
+	 * @return
+	 */
+	public GameState getGameState(){
+		return state;
+	}
+	
+	/**
+	 * Puts a piece on the board and increments the piece count.
+	 * @param board The board to put the piece on.
+	 * @param index The location in which to place the piece.
+	 * @param piece The piece to place.
+	 */
 	private void placePiece(Board board, int index, Status piece){
 		board.setStatus(index, piece);
 		board.incrementMoveCount();

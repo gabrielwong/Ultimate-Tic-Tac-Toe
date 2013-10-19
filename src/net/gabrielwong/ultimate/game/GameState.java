@@ -24,7 +24,7 @@ public class GameState {
 	 */
 	public GameState(GameState state){
 		board = new BigBoard(state.getBoard());
-		currentTurnPlayerId = state.getPlayerId();
+		setPlayerId(state.getPlayerId());
 	}
 	
 	/**

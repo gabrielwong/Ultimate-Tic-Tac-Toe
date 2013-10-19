@@ -83,14 +83,14 @@ public class Board implements Cloneable{
 	}
 	
 	protected boolean getBit(int bitIndex){
-		return (data & (1 << bitIndex)) != 0;
+		return (data & (0x1 << bitIndex)) != 0;
 	}
 	
 	protected void setBit(int bitIndex, boolean value){
 		if (value)
-			data |= 1 << bitIndex;
+			data |= 0x1 << bitIndex;
 		else
-			data &= ~(1 << bitIndex);
+			data &= ~(0x1 << bitIndex);
 	}
 	
 	@Override
