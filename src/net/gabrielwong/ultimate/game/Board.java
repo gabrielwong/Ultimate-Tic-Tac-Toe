@@ -1,23 +1,24 @@
 package net.gabrielwong.ultimate.game;
 
 /**
- * Represents a board of Tic-Tac-Toe.
+ * Represents a board of Tic-Tac-Toe. Minimize space for network transfer.
  * @author Gabriel
  *
  */
 public class Board implements Cloneable{
 	/**
-	 * Represents the pieces on the board.
-	 * The index-th bit indicates whether the square at index is occupied.
-	 * The (9 + index)-th bit indicates the ID of the player who owns the piece.
+	 * Holds Status and move count in one int to save memory.
 	 */
-	private int board = 0;
+	private int data = 0;
 	
 	/**
 	 * Returned when asking for a non-existent player.
 	 */
 	public static final int NO_PLAYER = -1;
-	protected static final int N_SQUARES = 9;
+	protected static final int PIECE_STATUS_START_BIT = 0,
+							   MOVE_COUNT_START_BIT = 18;
+	
+	public static final int SIDE_LENGTH = 3;
 	
 	/**
 	 * Creates an empty Board.
@@ -29,57 +30,67 @@ public class Board implements Cloneable{
 	 * @param b the Board to duplicate
 	 */
 	public Board(Board b){
-		board = b.board;
+		data = b.data;
 	}
 	
 	/**
-	 * Return whether there is a piece at index.
+	 * Returns the PieceStatus at the specified index;
 	 * @param index
-	 * @return whether there is a piece at index
+	 * @return
 	 */
-	public boolean isOccupied(int index){
-		int mask = 1 << index;
-		return (mask & board) != 0;
-	}
-	
-	public void setOccupied(int index, boolean isOccupied){
-		int mask = 1 << index;
-		board |= mask;
-		if (!isOccupied){
-			board ^= mask; // true XOR a is equivalent to NOT a
-		}
+	public Status getStatus(int index){
+		int shift = 2 * index + PIECE_STATUS_START_BIT;
+		int ordinal = (data & (0x11 << shift)) >>> shift;
+		return Status.values()[ordinal];
 	}
 	
 	/**
-	 * Returns the player ID of the owner of the piece at index or @link NO_PLAYER if the square index is not occupied.
+	 * Sets the PieceStatus at the specified index;
 	 * @param index
-	 * @return the player ID of the piece at index
+	 * @PieceStatus status
+	 * @return
 	 */
-	public int getPiecePlayerId(int index){
-		if (!isOccupied(index)){
-			return NO_PLAYER;
-		}
-		int mask = 1 << (N_SQUARES + index);
-		return ( (mask & board) == 0) ? 0 : 1;
+	public void setStatus(int index, Status status){
+		int ordinal = status.ordinal();
+		int shift = 2 * index + PIECE_STATUS_START_BIT;
+		data &= ~(0x11 << shift); // Clear bits
+		data |= ordinal << shift; // Set bits
 	}
 	
 	/**
-	 * Place a piece belonging to player id at index.
-	 * @param index
-	 * @param id
+	 * Returns the number of non-playable squares.
+	 * @return
 	 */
-	public void setPiecePlayerId(int index, int id){
-		if (id == NO_PLAYER){
-			setOccupied(index, false);
-		} else{
-			setOccupied(index, true);
-			int mask = 1 << (N_SQUARES + index);
-			board |= mask;
-			if (id == 0){
-				board ^= mask; // true XOR a is equivalent to NOT a
-			}
-		}
-		
+	public int getMoveCount(){
+		return (data & (0x1111 << MOVE_COUNT_START_BIT)) >>> MOVE_COUNT_START_BIT;
+	}
+	
+	/**
+	 * Sets the number of non-playable squares.
+	 * @param count
+	 */
+	public void setMoveCount(int count){
+		// Does not check if count > 15. Could be a problem if the side length size is increased.
+		data &= ~(0x1111 << MOVE_COUNT_START_BIT);
+		data |= count << MOVE_COUNT_START_BIT;
+	}
+	
+	/**
+	 * Increment the number of non-playable squares.
+	 */
+	public void incrementMoveCount(){
+		setMoveCount(getMoveCount() + 1);
+	}
+	
+	protected boolean getBit(int bitIndex){
+		return (data & (0x1 << bitIndex)) != 0;
+	}
+	
+	protected void setBit(int bitIndex, boolean value){
+		if (value)
+			data |= 0x1 << bitIndex;
+		else
+			data &= ~(0x1 << bitIndex);
 	}
 	
 	@Override

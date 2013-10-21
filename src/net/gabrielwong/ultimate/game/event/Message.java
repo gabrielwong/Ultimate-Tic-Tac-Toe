@@ -1,4 +1,4 @@
-package net.gabrielwong.ultimate.game.message;
+package net.gabrielwong.ultimate.game.event;
 
 public abstract class Message {
 	private final Object source;
