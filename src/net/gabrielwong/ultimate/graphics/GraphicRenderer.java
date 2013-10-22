@@ -11,6 +11,11 @@ import android.graphics.drawable.Drawable;
 import android.view.MotionEvent;
 import android.view.View;
 
+/**
+ * Renders all of the Graphics
+ * @author Andy
+ *
+ */
 public class GraphicRenderer extends View{
 
 	private Drawable bigBoard[] = new Drawable[9];
@@ -26,13 +31,14 @@ public class GraphicRenderer extends View{
 	
 	private static final int focusRatio = 5;
 	private static final int focusMargin = 1;
+	private static int focusWidth;
 	
 	public GraphicRenderer(Context context)
 	{
 		super(context);
 		DrawGraphics.getResource(context);
 		
-		backBoard = context.getResources().getDrawable(R.drawable.backBoard);
+		// backBoard = context.getResources().getDrawable(R.drawable.backBoard);
 	}
 
 	@Override
@@ -51,7 +57,7 @@ public class GraphicRenderer extends View{
 		// Check whether the board should be focused or not
 		if (zoomBoard)
 		{
-			backBoard = DrawGraphics.resizeBitmap(canvas.getWidth()/2, backBoard);
+		//	backBoard = DrawGraphics.resizeBitmap(canvas.getWidth()/2, backBoard);
 			DrawGraphics.drawFocusBoard(tempBoard); 
 		}
 		
@@ -147,7 +153,12 @@ public class GraphicRenderer extends View{
 	    		)
 	    	// Check which piece touched
 	    {
+	    	focusWidth = DrawGraphics.canvasWidth*(focusRatio-2*focusMargin)/focusRatio;
+	    	int xTouch = (int)event.getX() - DrawGraphics.canvasWidth*focusMargin/focusRatio;
+	    	int yTouch = (int)event.getY() - DrawGraphics.canvasWidth*focusMargin/focusRatio;
 	    	
+	    	int moveIndex = GameLogic.getIndex(xTouch/(focusWidth/DrawGraphics.ROWS), yTouch/(focusWidth/DrawGraphics.ROWS)); 
+	    	// RUN MOVE TO INDICATE MOVE
 	    }
 	    else
 	    	zoomBoard = false;
