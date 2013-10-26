@@ -8,8 +8,13 @@ package net.gabrielwong.ultimate.game;
  */
 public class GameState {
 	private BigBoard board;
-	boolean currentTurnPlayerId;
-	Status status;
+	private boolean currentTurnPlayerId;
+	private Status status;
+	
+	/**
+	 * Represents a non-existant player.
+	 */
+	public static final int NO_PLAYER = -1;
 	
 	/**
 	 * Construct the state of a new game.

@@ -39,6 +39,8 @@ public class GameLogic implements MoveListener{
 	 * @param move
 	 */
 	private void processMove(Move move){
+		if (move.getPlayerId() == GameState.NO_PLAYER)
+			move.setPlayerId(state.getPlayerId());
 		Status status = doMove(move);
 		state.setStatus(status);
 		sendStateChangeEvent();

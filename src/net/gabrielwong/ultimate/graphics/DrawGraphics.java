@@ -92,16 +92,16 @@ public class DrawGraphics {
 		
 		switch(status){
 		case PLAYABLE:
-			id = R.drawable.bluesquare;
+			id = R.drawable.playable;
 			break;
 		case PLAYER_ONE:
-			id = R.drawable.redsquare;
+			id = R.drawable.playerone;
 			break;
 		case PLAYER_ZERO:
-			id = R.drawable.greensquare;
+			id = R.drawable.playerzero;
 			break;
 		case TIE:
-			id = R.drawable.graysquare;
+			id = R.drawable.tie;
 			break;
 		}
 		return res.getDrawable(id);

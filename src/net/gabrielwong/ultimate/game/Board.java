@@ -11,14 +11,11 @@ public class Board implements Cloneable{
 	 */
 	private int data = 0;
 	
-	/**
-	 * Returned when asking for a non-existent player.
-	 */
-	public static final int NO_PLAYER = -1;
 	protected static final int PIECE_STATUS_START_BIT = 0,
 							   MOVE_COUNT_START_BIT = 18;
 	
-	public static final int SIDE_LENGTH = 3;
+	public static final int SIDE_LENGTH = 3,
+							N_SQUARES = SIDE_LENGTH * SIDE_LENGTH;
 	
 	/**
 	 * Creates an empty Board.
