@@ -1,82 +1,203 @@
 package net.gabrielwong.ultimate.graphics;
 
+import net.gabrielwong.ultimate.R;
 import net.gabrielwong.ultimate.game.GameLogic;
 import net.gabrielwong.ultimate.game.GameState;
 import net.gabrielwong.ultimate.game.Status;
-import android.R;
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Bitmap.Config;
 import android.graphics.Canvas;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.view.MotionEvent;
-import android.view.View;
 
-/**
- * Renders all of the Graphics
- * @author Andy
- *
+/*
+ * This file will only be run once to create the graphics
+ * It defines all of the constants depending on screen size
+ * It initializes all of the bitmap images
+ * All of the functions to dynamically modify the screen is
+ * in DrawGraphics.java
  */
-public class GraphicRenderer extends View{
 
-	private Drawable bigBoard[] = new Drawable[9];
-	private static Drawable smallBoard[][] = new Drawable[9][9];
+
+
+
+public class GraphicRenderer {
+
+	final static int ROWS = 3;
+	private Context context = null;
 	
-	// During focus
-	private static Drawable tempBoard[] = new Drawable[9];
-	private static Drawable backBoard;
+	private static Resources res;
+	private static Bitmap[] statusBitmaps;
+	private static Bitmap background;
 	
-	private Status status;
-	private GameState state;
-	private static boolean zoomBoard = false;
+	public final static int transparency = 125;
+	public static int canvasWidth; 
 	
-	private static final int focusRatio = 5;
-	private static final int focusMargin = 1;
-	private static int focusWidth;
-	
+
 	public GraphicRenderer(Context context)
 	{
-		super(context);
-		DrawGraphics.getResource(context);
-		
-		// backBoard = context.getResources().getDrawable(R.drawable.backBoard);
+		this.context = context;
+		res = context.getResources();
+		loadBitmaps();
 	}
-
-	@Override
-	protected void onDraw(Canvas canvas) {
-		// TODO Auto-generated method stub
-		super.onDraw(canvas);
-		
-		// Setting the values of the squares
-		bigBoard = DrawGraphics.initializeBoard(canvas, bigBoard, status, state);
-		
-		for (int i=0;i<smallBoard.length;i++)
-			smallBoard[i] = DrawGraphics.initializeSmallBoard(canvas, smallBoard[i],i, status, state);
-		
-		drawBigBoard(bigBoard, canvas);
-		
-		// Check whether the board should be focused or not
-		if (zoomBoard)
-		{
-		//	backBoard = DrawGraphics.resizeBitmap(canvas.getWidth()/2, backBoard);
-			DrawGraphics.drawFocusBoard(tempBoard); 
+	
+	private void loadBitmaps(){
+		statusBitmaps = new Bitmap[Status.values().length];
+		for (Status s : Status.values()){
+			int id = 0;
+			
+			switch(s){
+			case PLAYABLE:
+				id = R.drawable.playable;
+				break;
+			case PLAYER_ONE:
+				id = R.drawable.playerone;
+				break;
+			case PLAYER_ZERO:
+				id = R.drawable.playerzero;
+				break;
+			case TIE:
+				id = R.drawable.tie;
+				break;
+			}
+			statusBitmaps[s.ordinal()] = BitmapFactory.decodeResource(context.getResources(), id);
 		}
 		
-		//Checks for any changes needed to be made
-		invalidate();
+		background = BitmapFactory.decodeResource(context.getResources(), R.drawable.board);
 	}
+	
+	private Bitmap getStatusBitmap(Status s){
+		return statusBitmaps[s.ordinal()];
+	}
+	
+	/**
+	 * Initialize all of the values. Called the first time by the drawBoard View
+	 * @param canvas
+	 * @param bigSquare
+	 * @param smallSquare
+	 */
+	public static Drawable[] initializeBoard(Canvas canvas, Drawable bigSquare[], Status status, GameState state)
+	{	
+		canvasWidth = canvas.getWidth();
+		
+		for (int i=0;i<9;i++)
+		{
+			status = state.getBoard().getStatus(i);
+			bigSquare[i] = getIcon(status);
+			
+			// Resize each square depending on the screen size
+			bigSquare[i] = resizeBitmap(canvas.getWidth()/ROWS, bigSquare[i]);
+		}
+		
+		return bigSquare;
+	}
+
+	public static Drawable[] initializeSmallBoard(Canvas canvas, Drawable smallSquare[], int index, Status status, GameState state)
+	{	
+		for (int j=0;j<smallSquare.length;j++)
+		{
+			status = state.getBoard().getSmallBoard(index).getStatus(j);
+			smallSquare[j] = getIcon(status);
+			
+			// Resize each square depending on the screen size
+			smallSquare[j] = resizeBitmap(canvas.getWidth()/ROWS/ROWS,smallSquare[j]);
+		}
+		
+		return smallSquare;
+	}
+	
+	/**
+	 * Checks the value of the status and returns an image based on the value
+	 * @param status
+	 * @return
+	 */
+	public static Drawable getIcon(Status status){
+		int id = 0;
+		
+		switch(status){
+		case PLAYABLE:
+			id = R.drawable.playable;
+			break;
+		case PLAYER_ONE:
+			id = R.drawable.playerone;
+			break;
+		case PLAYER_ZERO:
+			id = R.drawable.playerzero;
+			break;
+		case TIE:
+			id = R.drawable.tie;
+			break;
+		}
+		return res.getDrawable(id);
+	}
+	
+	/**
+	 * Draws the big board and fill it with playable bitmaps
+	 * @param canvas
+	 * @param square
+	 * @param playableSquare
+	 */
+	public static void drawBigBoard(Canvas canvas, Bitmap square[], Bitmap playableSquare)
+	{
+		for (int i=0;i<9;i++)
+		{
+			square[i] = playableSquare; 
+			canvas.drawBitmap(square[i], 
+					GameLogic.getCol(i)*canvas.getWidth()/ROWS,
+					GameLogic.getRow(i)*canvas.getWidth()/ROWS,
+					null);
+		}
+	}
+	
+	/**
+	 * Resizing the bitmap using height and width
+	 * @param height
+	 * @param width
+	 * @param image
+	 */
+	@SuppressWarnings("deprecation")
+	public static Drawable resizeBitmap(int height, Drawable image)
+	{
+		Bitmap b = ((BitmapDrawable)image).getBitmap();
+		Bitmap bitmapResized = Bitmap.createScaledBitmap(b, height, height, false);
+		return new BitmapDrawable(bitmapResized);
+	}
+	
+	
+	/**
+	 * Converts Drawable to Bitmap
+	 * @param drawable
+	 * @return
+	 */
+	public static Bitmap drawableToBitmap (Drawable drawable) {
+	    if (drawable instanceof BitmapDrawable) {
+	        return ((BitmapDrawable)drawable).getBitmap();
+	    }
+
+	    Bitmap bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight(), Config.ARGB_8888);
+	    Canvas canvas = new Canvas(bitmap); 
+	    drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+	    drawable.draw(canvas);
+
+	    return bitmap;
+	}
+	
 
 	/**
 	 * Receives all 9 board pieces and places them on the canvas
 	 * @param piece
 	 * @param canvas
 	 */
-	private void drawBigBoard(Drawable[] piece, Canvas canvas)
+	static void drawBigBoard(Drawable[] piece, Canvas canvas)
 	{
 		for (int i=0;i<piece.length;i++)
 		{
-			canvas.drawBitmap(DrawGraphics.drawableToBitmap(piece[i]),
-				GameLogic.getCol(i)*canvas.getWidth()/DrawGraphics.ROWS,
-				GameLogic.getRow(i)*canvas.getWidth()/DrawGraphics.ROWS,
+			canvas.drawBitmap(GraphicRenderer.drawableToBitmap(piece[i]),
+				GameLogic.getCol(i)*canvas.getWidth()/GraphicRenderer.ROWS,
+				GameLogic.getRow(i)*canvas.getWidth()/GraphicRenderer.ROWS,
 				null);
 		}
 	}
@@ -86,7 +207,7 @@ public class GraphicRenderer extends View{
 	 * @param smallpiece
 	 * @param canvas
 	 */
-	private void drawSmallBoard(Drawable[][] smallpiece, Canvas canvas)
+	static void drawSmallBoard(Drawable[][] smallpiece, Canvas canvas)
 	{
 		int divisor = canvas.getWidth();
 		int smallDivisor = divisor*divisor;
@@ -94,7 +215,7 @@ public class GraphicRenderer extends View{
 		{
 			for (int j=0;j<smallpiece[0].length;j++)
 			{
-				canvas.drawBitmap(DrawGraphics.drawableToBitmap(smallpiece[i][j]),
+				canvas.drawBitmap(GraphicRenderer.drawableToBitmap(smallpiece[i][j]),
 						GameLogic.getCol(i)*canvas.getWidth()/divisor
 						+
 						GameLogic.getCol(j)*canvas.getWidth()/smallDivisor,
@@ -106,73 +227,9 @@ public class GraphicRenderer extends View{
 			}
 		}
 	}
-
 	
-	/**
-	 * Check when the screen is touched. If touched spot is 
-	 * the same as lifted spot, take index of the board
-	 * 
-	 */
-	@Override
-	public boolean onTouchEvent(MotionEvent event) {
-	    if (!zoomBoard)
-	    {
-			int startX = (int)event.getX();
-		    int startY = (int)event.getY();
-		    
-		    int currentX=0;
-		    int currentY=0;
-		    
-		    if (event.getAction() == MotionEvent.ACTION_UP)
-		    {
-		    	currentX = (int)event.getX();
-		    	currentY = (int)event.getY();
-		    }
-		    
-		    // Check if clicked spot same as lifted spot
-		    if (startX/DrawGraphics.canvasWidth/3 == currentX/DrawGraphics.canvasWidth/3
-		    	&& startY/DrawGraphics.canvasWidth/3 == currentY/DrawGraphics.canvasWidth/3)
-		    	{
-		    		int row = startX/DrawGraphics.canvasWidth/DrawGraphics.ROWS;
-		    		int col = startY/DrawGraphics.canvasWidth/DrawGraphics.ROWS;
-		    		
-		    		// Focus on the board since clicked
-		    		focusBoard(GameLogic.getIndex(row, col));
-		    	}
-	    }
-	    
-	    // Check if touched the focused board
-	    else if (// Check left side
-	    		(int) event.getX() >= DrawGraphics.canvasWidth*focusMargin/focusRatio 
-	    		&& // Check right side
-	    		(int) event.getX() <= DrawGraphics.canvasWidth*(focusRatio - focusMargin) / focusRatio
-	    		&& // Check top 
-	    		(int) event.getY() >= DrawGraphics.canvasWidth*focusMargin/focusRatio
-	    		&& // Check bottom
-	    		(int) event.getY() <= DrawGraphics.canvasWidth*(focusRatio-focusMargin)/focusRatio
-	    		)
-	    	// Check which piece touched
-	    {
-	    	focusWidth = DrawGraphics.canvasWidth*(focusRatio-2*focusMargin)/focusRatio;
-	    	int xTouch = (int)event.getX() - DrawGraphics.canvasWidth*focusMargin/focusRatio;
-	    	int yTouch = (int)event.getY() - DrawGraphics.canvasWidth*focusMargin/focusRatio;
-	    	
-	    	int moveIndex = GameLogic.getIndex(xTouch/(focusWidth/DrawGraphics.ROWS), yTouch/(focusWidth/DrawGraphics.ROWS)); 
-	    	// RUN MOVE TO INDICATE MOVE
-	    }
-	    else
-	    	zoomBoard = false;
-	return false;
-	}	
-
-
-	/**
-	 * Call this method when the board is clicked
-	 * @param index
-	 */
-	public static void focusBoard(int index)
+	public static void drawFocusBoard(Drawable board[])
 	{
-		zoomBoard = true;
-		tempBoard = smallBoard[index];
+		
 	}
 }

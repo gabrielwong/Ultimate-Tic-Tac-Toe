@@ -12,7 +12,9 @@ public class Board implements Cloneable{
 	private int data = 0;
 	
 	protected static final int PIECE_STATUS_START_BIT = 0,
-							   MOVE_COUNT_START_BIT = 18;
+							   MOVE_COUNT_START_BIT = 18,
+							   STATUS_MASK = 0x3,
+							   MOVE_COUNT_MASK = 0x15;
 	
 	public static final int SIDE_LENGTH = 3,
 							N_SQUARES = SIDE_LENGTH * SIDE_LENGTH;
@@ -37,7 +39,7 @@ public class Board implements Cloneable{
 	 */
 	public Status getStatus(int index){
 		int shift = 2 * index + PIECE_STATUS_START_BIT;
-		int ordinal = (data & (0x11 << shift)) >>> shift;
+		int ordinal = (data & (STATUS_MASK << shift)) >>> shift;
 		return Status.values()[ordinal];
 	}
 	
@@ -50,7 +52,7 @@ public class Board implements Cloneable{
 	public void setStatus(int index, Status status){
 		int ordinal = status.ordinal();
 		int shift = 2 * index + PIECE_STATUS_START_BIT;
-		data &= ~(0x11 << shift); // Clear bits
+		data &= ~(STATUS_MASK << shift); // Clear bits
 		data |= ordinal << shift; // Set bits
 	}
 	
@@ -59,7 +61,7 @@ public class Board implements Cloneable{
 	 * @return
 	 */
 	public int getMoveCount(){
-		return (data & (0x1111 << MOVE_COUNT_START_BIT)) >>> MOVE_COUNT_START_BIT;
+		return (data & (MOVE_COUNT_MASK << MOVE_COUNT_START_BIT)) >>> MOVE_COUNT_START_BIT;
 	}
 	
 	/**
@@ -68,7 +70,7 @@ public class Board implements Cloneable{
 	 */
 	public void setMoveCount(int count){
 		// Does not check if count > 15. Could be a problem if the side length size is increased.
-		data &= ~(0x1111 << MOVE_COUNT_START_BIT);
+		data &= ~(MOVE_COUNT_MASK << MOVE_COUNT_START_BIT);
 		data |= count << MOVE_COUNT_START_BIT;
 	}
 	
@@ -80,14 +82,14 @@ public class Board implements Cloneable{
 	}
 	
 	protected boolean getBit(int bitIndex){
-		return (data & (0x1 << bitIndex)) != 0;
+		return (data & (1 << bitIndex)) != 0;
 	}
 	
 	protected void setBit(int bitIndex, boolean value){
 		if (value)
-			data |= 0x1 << bitIndex;
+			data |= 1 << bitIndex;
 		else
-			data &= ~(0x1 << bitIndex);
+			data &= ~(1 << bitIndex);
 	}
 	
 	@Override
