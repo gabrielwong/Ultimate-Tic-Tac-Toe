@@ -6,6 +6,7 @@ import net.gabrielwong.ultimate.game.event.MoveEvent;
 import net.gabrielwong.ultimate.game.event.MoveListener;
 import net.gabrielwong.ultimate.game.event.StateChangeEvent;
 import net.gabrielwong.ultimate.game.event.StateChangeListener;
+import android.util.Log;
 
 /**
  * Performs all the logic for the game.
@@ -197,7 +198,7 @@ public class GameLogic implements MoveListener{
 		}
 		
 		// Check if board is full
-		if (board.getMoveCount() >= Board.SIDE_LENGTH * Board.SIDE_LENGTH)
+		if (board.getMoveCount() >= Board.N_SQUARES)
 			return Status.TIE;
 
 		return Status.PLAYABLE;

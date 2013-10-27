@@ -97,7 +97,11 @@ public class BoardView extends View implements StateChangeListener {
 		if (zoomBoard == -1)
 	    {
     		int row = Board.SIDE_LENGTH * y / getWidth();
-    		int col = Board.SIDE_LENGTH * x /getWidth();
+    		int col = Board.SIDE_LENGTH * x / getWidth();
+    		
+    		if (row >= Board.SIDE_LENGTH){
+    			return true;
+    		}
     		
     		// Focus on the board since clicked
     		zoomBoard = GameLogic.getIndex(row, col);

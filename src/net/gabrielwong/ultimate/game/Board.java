@@ -1,5 +1,7 @@
 package net.gabrielwong.ultimate.game;
 
+import android.util.Log;
+
 /**
  * Represents a board of Tic-Tac-Toe. Minimize space for network transfer.
  * @author Gabriel
@@ -14,7 +16,7 @@ public class Board implements Cloneable{
 	protected static final int PIECE_STATUS_START_BIT = 0,
 							   MOVE_COUNT_START_BIT = 18,
 							   STATUS_MASK = 0x3,
-							   MOVE_COUNT_MASK = 0x15;
+							   MOVE_COUNT_MASK = 0xF;
 	
 	public static final int SIDE_LENGTH = 3,
 							N_SQUARES = SIDE_LENGTH * SIDE_LENGTH;
