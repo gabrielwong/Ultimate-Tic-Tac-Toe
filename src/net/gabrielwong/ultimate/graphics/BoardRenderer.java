@@ -31,19 +31,15 @@ public class BoardRenderer {
 			switch(s){
 			case PLAYABLE:
 				id = R.drawable.playable;
-				System.out.println("PLAYABLE");
 				break;
 			case PLAYER_ONE:
 				id = R.drawable.playerone;
-				System.out.println("PLAYER ONE");
 				break;
 			case PLAYER_ZERO:
 				id = R.drawable.playerzero;
-				System.out.println("PLAYER ZERO");
 				break;
 			case TIE:
 				id = R.drawable.tie;
-				System.out.println("TIE");
 				break;
 			}
 			statusBitmaps[s.ordinal()] = BitmapFactory.decodeResource(context.getResources(), id);

@@ -29,6 +29,7 @@ public class GameLogic implements MoveListener{
 		Thread thread = new Thread(){
 			public void run(){
 				processMove(move);
+				System.out.println(move.getBigIndex() + "," + move.getSmallIndex());
 			}
 		};
 		thread.start();
@@ -51,7 +52,7 @@ public class GameLogic implements MoveListener{
 	 * @param listener
 	 */
 	public void addStateChangeListener(StateChangeListener listener){
-		if (stateChangeListeners.indexOf(listener) != -1)
+		if (stateChangeListeners.indexOf(listener) == -1)
 			stateChangeListeners.add(listener);
 	}
 	
@@ -67,7 +68,7 @@ public class GameLogic implements MoveListener{
 	 * Sends the new GameState to all StateChangeListener
 	 */
 	private void sendStateChangeEvent(){
-		StateChangeEvent evt = new StateChangeEvent(new GameState(state)); // Clone of the state
+		StateChangeEvent evt = new StateChangeEvent(state);
 		for (StateChangeListener listener : stateChangeListeners){
 			listener.stateChanged(evt);
 		}
