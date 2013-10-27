@@ -2,6 +2,7 @@ package net.gabrielwong.ultimate.graphics;
 
 import java.util.ArrayList;
 
+import net.gabrielwong.ultimate.game.BigBoard;
 import net.gabrielwong.ultimate.game.Board;
 import net.gabrielwong.ultimate.game.GameLogic;
 import net.gabrielwong.ultimate.game.GameState;
@@ -12,6 +13,7 @@ import net.gabrielwong.ultimate.game.event.StateChangeEvent;
 import net.gabrielwong.ultimate.game.event.StateChangeListener;
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.Paint;
 import android.graphics.Rect;
 import android.view.MotionEvent;
 import android.view.View;
@@ -27,6 +29,8 @@ public class BoardView extends View implements StateChangeListener {
 	
 	// Size of margin of zoomed board as a ratio of the view's width
 	private static final double ZOOMED_MARGIN_RATIO = 0.1;
+	
+	private Paint paint = new Paint();
 	
 	public BoardView(Context context) {
 		super(context);
@@ -49,6 +53,8 @@ public class BoardView extends View implements StateChangeListener {
 					bounds.width(),
 					bounds.height());
 		}
+		String text = "Player: " + state.getPlayerId() + ", Board: " + state.getBoard().getActiveBoard();
+		canvas.drawText(text, 0, getWidth(), paint);
 	}
 
 	
@@ -76,7 +82,7 @@ public class BoardView extends View implements StateChangeListener {
     		int col = Board.SIDE_LENGTH * x /getWidth();
     		
     		// Focus on the board since clicked
-    		focusBoard(GameLogic.getIndex(row, col));
+    		zoomBoard = GameLogic.getIndex(row, col);
 	    }
 	    else{ // Consider a zoomed board
 	    	boolean withinZoomedBoard = x >= zoomMargin && x <= zoomMargin + zoomWidth &&
@@ -89,23 +95,14 @@ public class BoardView extends View implements StateChangeListener {
 		    	
 		    	// RUN MOVE TO INDICATE MOVE
 		    	sendMoveEvent(zoomBoard, moveIndex);
-		    	zoomBoard = -1;
+		    	zoomBoard = BigBoard.NO_ACTIVE_BOARD;
 	    	}
 	    	else{
-		    	zoomBoard = -1;
+		    	zoomBoard = BigBoard.NO_ACTIVE_BOARD;
 	    	}
 	    }
 		invalidate();
 		return true;
-	}	
-
-	/**
-	 * Call this method when the board is clicked
-	 * @param index
-	 */
-	public void focusBoard(int index)
-	{
-		zoomBoard = index;
 	}
 	
 	private Rect getZoomedBounds(){
