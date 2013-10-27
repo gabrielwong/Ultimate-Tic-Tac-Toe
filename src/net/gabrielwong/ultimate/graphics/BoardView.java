@@ -24,6 +24,8 @@ public class BoardView extends View implements StateChangeListener {
 	private BoardRenderer renderer;
 	
 	private int zoomBoard = -1;
+	private int backgroundColor = 0xFFFFFFFF;
+	private int activeColor = 0xFFDDDDDD;
 	
 	private ArrayList<MoveListener> moveListeners = new ArrayList<MoveListener>();
 	
@@ -42,10 +44,26 @@ public class BoardView extends View implements StateChangeListener {
 	protected void onDraw(Canvas canvas) {
 		// TODO Auto-generated method stub
 		super.onDraw(canvas);
+		Paint backgroundPaint = new Paint();
+		backgroundPaint.setColor(backgroundColor);
+		
+		if (state.getBoard().hasActiveBoard()){
+			Paint activePaint = new Paint();
+			activePaint.setColor(activeColor);
+			int row = GameLogic.getRow(state.getBoard().getActiveBoard());
+			int col = GameLogic.getCol(state.getBoard().getActiveBoard());
+			Rect activeBounds = new Rect(col * getWidth() / Board.SIDE_LENGTH,
+										 row * getWidth() / Board.SIDE_LENGTH,
+										 (col + 1) * getWidth() / Board.SIDE_LENGTH,
+										 (row + 1) * getWidth() / Board.SIDE_LENGTH);
+			canvas.drawRect(activeBounds, activePaint);
+		}
+		
 		renderer.drawBigBoard(canvas, state.getBoard());
 		
 		if (zoomBoard != -1){
 			Rect bounds = getZoomedBounds();
+			canvas.drawRect(bounds, backgroundPaint);
 			renderer.drawBoard(canvas, 
 					state.getBoard().getSmallBoard(zoomBoard), 
 					bounds.left, 

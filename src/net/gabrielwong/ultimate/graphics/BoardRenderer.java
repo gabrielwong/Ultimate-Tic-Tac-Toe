@@ -68,8 +68,10 @@ public class BoardRenderer {
 		
 		// Draw each square
 		for (int i = 0; i < Board.N_SQUARES; i++){
-			Bitmap b = getStatusBitmap(board.getStatus(i));
-			canvas.drawBitmap(b, null, getSquareBounds(left, top, width, height, i), null);
+			if (board.getStatus(i) != Status.PLAYABLE){
+				Bitmap b = getStatusBitmap(board.getStatus(i));
+				canvas.drawBitmap(b, null, getSquareBounds(left, top, width, height, i), null);
+			}
 		}
 		canvas.drawBitmap(background, null, backgroundBounds, null);
 	}
