@@ -29,7 +29,6 @@ public class GameLogic implements MoveListener{
 		Thread thread = new Thread(){
 			public void run(){
 				processMove(move);
-				System.out.println(move.getBigIndex() + "," + move.getSmallIndex());
 			}
 		};
 		thread.start();
@@ -107,7 +106,7 @@ public class GameLogic implements MoveListener{
 		}
 		
 		// Set the active board
-		if (board.getStatus(move.getBigIndex()) == Status.PLAYABLE)
+		if (board.getStatus(move.getSmallIndex()) == Status.PLAYABLE)
 			board.setActiveBoard(move.getSmallIndex());
 		else
 			board.setActiveBoard(BigBoard.NO_ACTIVE_BOARD);
