@@ -123,7 +123,7 @@ public class BoardView extends View implements StateChangeListener {
 	@Override
 	public void stateChanged(StateChangeEvent event) {
 		state = event.getState();
-		invalidate();
+		postInvalidate();
 	}
 	
 	public void addMoveListener(MoveListener listener){
