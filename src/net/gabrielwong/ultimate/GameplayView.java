@@ -1,6 +1,4 @@
 package net.gabrielwong.ultimate;
-import java.util.ArrayList;
-
 import net.gabrielwong.ultimate.game.BigBoard;
 import net.gabrielwong.ultimate.game.Board;
 import net.gabrielwong.ultimate.game.GameLogic;
@@ -34,7 +32,7 @@ public class GameplayView extends View implements StateChangeListener{
 	private Paint backgroundPaint = null;
 	private Paint activePaint = null;
 	
-	private ArrayList<MoveListener> moveListeners = null;
+	private MoveListener moveListener = null;
 	
 	public GameplayView(Context context) {
 		super(context);
@@ -42,8 +40,6 @@ public class GameplayView extends View implements StateChangeListener{
 		state = new GameState();
 		renderer = new BoardRenderer(getContext());
 		initPaints();
-		
-		moveListeners = new ArrayList<MoveListener>();
 	}
 	
 	private void initPaints(){
@@ -140,13 +136,8 @@ public class GameplayView extends View implements StateChangeListener{
 		postInvalidate();
 	}
 	
-	public void addMoveListener(MoveListener listener){
-		if (moveListeners.indexOf(listener) == -1)
-			moveListeners.add(listener);
-	}
-	
-	public void removeMoveListener(MoveListener listener){
-		moveListeners.remove(listener);
+	public void setMoveListener(MoveListener listener){
+		moveListener = listener;
 	}
 	
 	private Rect getZoomedBounds(){
@@ -159,8 +150,6 @@ public class GameplayView extends View implements StateChangeListener{
 	private void sendMoveEvent(int bigIndex, int smallIndex){
 		Move move = new Move(GameState.NO_PLAYER, bigIndex, smallIndex); // assume correct player for now
 		MoveEvent event = new MoveEvent(move);
-		for (MoveListener listener : moveListeners){
-			listener.movePerformed(event);
-		}
+		moveListener.movePerformed(event);
 	}
 }
