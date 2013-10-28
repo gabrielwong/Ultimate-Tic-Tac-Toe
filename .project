@@ -3,6 +3,8 @@
 	<name>ultimate-tac-tac-toe</name>
 	<comment></comment>
 	<projects>
+		<project>BaseGameUtils</project>
+		<project>google-play-services_lib</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

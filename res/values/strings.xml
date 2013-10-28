@@ -4,9 +4,9 @@
     <string name="app_name">Ultimate Tic-Tac-Toe</string>
     <string name="dummy_button">Dummy Button</string>
     <string name="dummy_content">DUMMY\nCONTENT</string>
-    <string name="title_activity_main">MainActivity</string>
+    <string name="title_activity_main">Ultimate Tic-Tac-Toe</string>
     <string name="action_settings">Settings</string>
     <string name="hello_world">Hello world!</string>
-    <string name="title_activity_andy">AndyActivity</string>
+    <string name="app_id">734712208475</string>
 
 </resources>
