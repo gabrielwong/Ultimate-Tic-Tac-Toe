@@ -58,9 +58,10 @@ public class GameLogic implements MoveListener{
 				if (! lockSuccess)
 					return;
 				
+				boolean moveSuccess = false;
 				while (!moveQueue.isEmpty()){
 					Move move = moveQueue.poll();
-					boolean moveSuccess = processMove(move);
+					moveSuccess = processMove(move);
 					
 					// Empty the queue
 					if (moveSuccess){
@@ -71,6 +72,7 @@ public class GameLogic implements MoveListener{
 				}
 				
 				moveQueueLock.unlock();
+				sendStateChangeEvent();
 			}
 		}).run();
 	}
@@ -86,7 +88,6 @@ public class GameLogic implements MoveListener{
 		Status status = doMove(move);
 		if (status != null){
 			state.setStatus(status);
-			sendStateChangeEvent();
 			return true;
 		}
 		return false;
