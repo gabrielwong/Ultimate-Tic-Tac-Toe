@@ -2,6 +2,8 @@ package net.gabrielwong.ultimate.game;
 
 import java.util.ArrayList;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import net.gabrielwong.ultimate.game.event.MoveEvent;
 import net.gabrielwong.ultimate.game.event.MoveListener;
@@ -18,36 +20,76 @@ public class GameLogic implements MoveListener{
 	private GameState state;
 	private ArrayList<StateChangeListener> stateChangeListeners;
 	
+	private ConcurrentLinkedQueue<Move> moveQueue = null;
+	private Lock moveQueueLock = null;
+	
 	public GameLogic(){
 		state = new GameState();
 		stateChangeListeners = new ArrayList<StateChangeListener>();
+
+		moveQueue = new ConcurrentLinkedQueue<Move>();
+		moveQueueLock = new ReentrantLock();
 	}
 	
 	@Override
 	public void movePerformed(MoveEvent evt){
 		final Move move = evt.getMove();
 		
-		// To avoid hanging any event dispatch threads
-		// Could lead to concurrency errors. Later, put moves into queue
-		// and clear the queue when a move is successfully processed.
-		Thread thread = new Thread(){
-			public void run(){
-				processMove(move);
-			}
-		};
-		thread.start();
+		addMoveToQueue(move);
+		processMoveQueue();
 	}
 	
 	/**
-	 * Called in response to a move event.
+	 * Add a move to the move queue.
 	 * @param move
 	 */
-	private void processMove(Move move){
+	private void addMoveToQueue(Move move){
+		moveQueue.add(move);
+	}
+	
+	/**
+	 * Processes each move in the queue until there is one that is successful.
+	 * All subsequent moves are then discarded.
+	 */
+	private void processMoveQueue(){
+		(new Thread(){
+			public void run(){
+				boolean lockSuccess = moveQueueLock.tryLock();
+				if (! lockSuccess)
+					return;
+				
+				while (!moveQueue.isEmpty()){
+					Move move = moveQueue.poll();
+					boolean moveSuccess = processMove(move);
+					
+					// Empty the queue
+					if (moveSuccess){
+						while (!moveQueue.isEmpty()){
+							moveQueue.poll();
+						}
+					}
+				}
+				
+				moveQueueLock.unlock();
+			}
+		}).run();
+	}
+	
+	/**
+	 * Process a move in the queue.
+	 * @param move
+	 * @return Whether the move was successful.
+	 */
+	private boolean processMove(Move move){
 		if (move.getPlayerId() == GameState.NO_PLAYER)
 			move.setPlayerId(state.getPlayerId());
 		Status status = doMove(move);
-		state.setStatus(status);
-		sendStateChangeEvent();
+		if (status != null){
+			state.setStatus(status);
+			sendStateChangeEvent();
+			return true;
+		}
+		return false;
 	}
 	
 	/**
