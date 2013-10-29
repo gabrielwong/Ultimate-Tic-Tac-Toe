@@ -2,14 +2,15 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:background="#eeeeee"
-    android:screenOrientation="portrait"
     android:gravity="center_vertical"
+    android:orientation="vertical"
+    android:screenOrientation="portrait"
     tools:context=".MultiplayerMenuFragment" >
 
     <!-- Local multiplayer button -->
-    <Button 
+
+    <Button
         android:id="@+id/local_multiplayer_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
