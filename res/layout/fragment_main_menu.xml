@@ -3,41 +3,62 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:background="#eeeeee"
+    android:screenOrientation="portrait"
+    android:gravity="center_vertical"
     tools:context=".MainMenuFragment" >
 
     <!-- Singleplayer button -->
     <Button 
         android:id="@+id/singleplayer_button"
-        android:layout_width="wrap_content"
+        android:layout_width="125dp"
         android:layout_height="wrap_content"
+        android:layout_gravity="center"
+		android:background="@drawable/button_blue"
+        android:textColor="#FFFFFF"
+        android:layout_margin="10dp"
         android:text="@string/singleplayer" />
     
     <!-- Multiplayer button -->
     <Button 
         android:id="@+id/multiplayer_button"
-        android:layout_width="wrap_content"
+        android:layout_width="125dp"
         android:layout_height="wrap_content"
+        android:layout_gravity="center"
+		android:background="@drawable/button_green"
+        android:textColor="#FFFFFF"
+        android:layout_margin="10dp"
         android:text="@string/multiplayer" />
     
     <!-- Settings button -->
     <Button 
         android:id="@+id/settings_button"
-        android:layout_width="wrap_content"
+        android:layout_width="125dp"
         android:layout_height="wrap_content"
+        android:layout_gravity="center"
+		android:background="@drawable/button_orange"
+        android:textColor="#FFFFFF"
+        android:layout_margin="10dp"
         android:text="@string/settings" />
     
     <!-- Achievements button -->
     <Button 
         android:id="@+id/achievements_button"
-        android:layout_width="wrap_content"
+        android:layout_width="125dp"
         android:layout_height="wrap_content"
+        android:layout_gravity="center"
+		android:background="@drawable/button_purple"
+        android:textColor="#FFFFFF"
+        android:layout_margin="10dp"
         android:text="@string/achievements" />
     
     <!-- sign-in button -->
 	<com.google.android.gms.common.SignInButton
 	    android:id="@+id/sign_in_button"
 	    android:layout_width="wrap_content"
-	    android:layout_height="wrap_content" />
+	    android:layout_height="wrap_content"
+	    android:layout_gravity="center"
+        android:layout_margin="5dp" />
 
 	<!-- sign-out button -->
 	<Button
@@ -45,6 +66,8 @@
 	    android:layout_width="wrap_content"
 	    android:layout_height="wrap_content"
 	    android:text="@string/sign_out" 
-	    android:visibility="gone" />
+	    android:visibility="gone"
+	    android:layout_gravity="center"
+        android:layout_margin="5dp" />
 
 </LinearLayout>
