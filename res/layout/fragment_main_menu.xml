@@ -2,8 +2,16 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context=".MainMenuFragment" >
 
+    <!-- Singleplayer button -->
+    <Button 
+        android:id="@+id/singleplayer_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/singleplayer" />
+    
     <!-- Multiplayer button -->
     <Button 
         android:id="@+id/multiplayer_button"
@@ -17,6 +25,13 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/settings" />
+    
+    <!-- Achievements button -->
+    <Button 
+        android:id="@+id/achievements_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/achievements" />
     
     <!-- sign-in button -->
 	<com.google.android.gms.common.SignInButton

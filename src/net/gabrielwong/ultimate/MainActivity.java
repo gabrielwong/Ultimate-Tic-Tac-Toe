@@ -1,23 +1,28 @@
 package net.gabrielwong.ultimate;
 
+import net.gabrielwong.ultimate.game.AI;
 import net.gabrielwong.ultimate.game.GameLogic;
+import net.gabrielwong.ultimate.game.RandomAI;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 
 import com.google.example.games.basegameutils.BaseGameActivity;
 
 public class MainActivity extends BaseGameActivity implements
-	MainMenuFragment.Listener, MultiplayerMenuFragment.Listener{
+	MainMenuFragment.Listener, MultiplayerMenuFragment.Listener, GameplayFragment.Listener{
 	
 	// Debug stuff
 	final boolean ENABLE_DEBUG = true;
 	final String TAG = "MainActivity";
 	
+	final static int RC_UNUSED = 5001;
+	
 	final String BACK_TAG = "asdf123";
+	
+	GameLogic logic = null;
 	
 	// Fragments
 	GameplayFragment mGameplayFragment = null;
@@ -46,9 +51,22 @@ public class MainActivity extends BaseGameActivity implements
 	}
 	
 	void startLocalMultiplayerGame(){
-		GameLogic logic = new GameLogic();
+		logic = new GameLogic();
 		logic.addStateChangeListener(mGameplayFragment);
 		mGameplayFragment.addMoveListener(logic);
+		switchToFragment(mGameplayFragment);
+	}
+	
+	void startSingleplayerGame(){
+		logic = new GameLogic();
+		logic.addStateChangeListener(mGameplayFragment);
+		mGameplayFragment.addMoveListener(logic);
+		
+		AI ai = new RandomAI();
+		ai.setPlayerId(1);
+		ai.setMoveListener(logic);
+		logic.addStateChangeListener(ai);
+		
 		switchToFragment(mGameplayFragment);
 	}
 	
@@ -62,7 +80,7 @@ public class MainActivity extends BaseGameActivity implements
 
 	@Override
 	public void onSignInFailed() {
-		mMainFragment.setSignedIn(false);
+		mMainFragment.setSignedIn(isSignedIn());
 	}
 
 	@Override
@@ -99,8 +117,30 @@ public class MainActivity extends BaseGameActivity implements
 	@Override
 	public void onBackPressed(){
 		FragmentManager fm = getFragmentManager();
-		System.out.println(fm.getBackStackEntryCount());
 		if (fm.getBackStackEntryCount() > 1)
 			fm.popBackStack();
+		else
+			super.onBackPressed();
+	}
+
+	@Override
+	public void onAchievementsButtonClicked() {
+		if (isSignedIn()) {
+            startActivityForResult(getGamesClient().getAchievementsIntent(), RC_UNUSED);
+        } else {
+            showAlert(getString(R.string.achievements_not_available));
+        }
+	}
+
+	@Override
+	public void onEndGame() {
+		mGameplayFragment.removeMoveListener(logic);
+		logic.removeAllListeners();
+		switchToFragment(mMainFragment);
+	}
+
+	@Override
+	public void onSingleplayerButtonClicked() {
+		startSingleplayerGame();
 	}
 }

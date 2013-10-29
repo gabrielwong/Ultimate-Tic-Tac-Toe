@@ -1,6 +1,7 @@
 package net.gabrielwong.ultimate.game;
 
 import java.util.ArrayList;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 import net.gabrielwong.ultimate.game.event.MoveEvent;
 import net.gabrielwong.ultimate.game.event.MoveListener;
@@ -27,6 +28,8 @@ public class GameLogic implements MoveListener{
 		final Move move = evt.getMove();
 		
 		// To avoid hanging any event dispatch threads
+		// Could lead to concurrency errors. Later, put moves into queue
+		// and clear the queue when a move is successfully processed.
 		Thread thread = new Thread(){
 			public void run(){
 				processMove(move);
@@ -68,6 +71,7 @@ public class GameLogic implements MoveListener{
 	 * Sends the new GameState to all StateChangeListener
 	 */
 	private void sendStateChangeEvent(){
+		Log.d("GameLogic", "Sending stage change event");
 		StateChangeEvent evt = new StateChangeEvent(state);
 		for (StateChangeListener listener : stateChangeListeners){
 			listener.stateChanged(evt);
@@ -121,8 +125,12 @@ public class GameLogic implements MoveListener{
 	 * @return
 	 */
 	public boolean isValidMove(Move move){
+		return isValidMove(move, state);
+	}
+	
+	public static boolean isValidMove(Move move, GameState state){
 		// It's not the turn of the player that attempted the move
-		if (!isPlayerTurn(move.getPlayerId()))
+		if (!isPlayerTurn(move.getPlayerId(), state))
 			return false;
 		
 		BigBoard board = state.getBoard();
@@ -210,6 +218,10 @@ public class GameLogic implements MoveListener{
 	 * @return
 	 */
 	public boolean isPlayerTurn(int playerId){
+		return isPlayerTurn(playerId, state);
+	}
+	
+	public static boolean isPlayerTurn(int playerId, GameState state){
 		return state.getPlayerId() == playerId;
 	}
 	
@@ -282,5 +294,9 @@ public class GameLogic implements MoveListener{
 	private void placePiece(Board board, int index, Status piece){
 		board.setStatus(index, piece);
 		board.incrementMoveCount();
+	}
+	
+	public void removeAllListeners(){
+		stateChangeListeners = new ArrayList<StateChangeListener>();
 	}
 }

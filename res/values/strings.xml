@@ -12,5 +12,8 @@
     <string name="pref_two_touch">Two Touch Mode</string>
     <string name="pref_two_touch_summ"></string>
     <string name="settings">Settings</string>
+    <string name="achievements">Achievements</string>
+    <string name="achievements_not_available">Please sign in to view achievements.</string>
+    <string name="singleplayer">Single Player</string>
 
 </resources>
