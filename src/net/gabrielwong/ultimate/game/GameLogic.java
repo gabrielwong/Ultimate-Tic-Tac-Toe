@@ -114,7 +114,7 @@ public class GameLogic implements MoveListener{
 	 * Sends the new GameState to all StateChangeListener
 	 */
 	private void sendStateChangeEvent(){
-		Log.d("GameLogic", "Sending stage change event");
+		Log.d("GameLogic", "Sending stage change event" + state.getStatus());
 		StateChangeEvent evt = new StateChangeEvent(state);
 		for (StateChangeListener listener : stateChangeListeners){
 			listener.stateChanged(evt);
@@ -174,6 +174,9 @@ public class GameLogic implements MoveListener{
 	public static boolean isValidMove(Move move, GameState state){
 		// It's not the turn of the player that attempted the move
 		if (!isPlayerTurn(move.getPlayerId(), state))
+			return false;
+		
+		if (state.getStatus() != Status.PLAYABLE)
 			return false;
 		
 		BigBoard board = state.getBoard();

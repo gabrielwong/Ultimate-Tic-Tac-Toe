@@ -21,9 +21,11 @@ public abstract class AI implements StateChangeListener {
 	
 	@Override
 	public void stateChanged(StateChangeEvent event){
-		Log.d("AI", "State changed");
-		if (event.getState().getPlayerId() == getPlayerId())
+		if (event.getState().getStatus() == Status.PLAYABLE && 
+				event.getState().getPlayerId() == getPlayerId()){
 			sendMove(getMove(event));
+			Log.d("AI", "Send move" + event.getState().getStatus());
+		}
 	}
 	
 	public void setPlayerId(int playerId){

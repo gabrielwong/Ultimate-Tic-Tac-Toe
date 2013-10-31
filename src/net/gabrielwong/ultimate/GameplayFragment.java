@@ -1,7 +1,6 @@
 package net.gabrielwong.ultimate;
 import java.util.ArrayList;
 
-import net.gabrielwong.ultimate.MainMenuFragment.Listener;
 import net.gabrielwong.ultimate.game.Status;
 import net.gabrielwong.ultimate.game.event.MoveEvent;
 import net.gabrielwong.ultimate.game.event.MoveListener;
@@ -19,6 +18,7 @@ public class GameplayFragment extends Fragment implements MoveListener, StateCha
 	
 	private GameplayView view = null;
 	
+	// Watch for concurrency issues
 	private ArrayList<MoveListener> moveListeners = null;
 	
 	Listener mListener = null;
@@ -80,6 +80,10 @@ public class GameplayFragment extends Fragment implements MoveListener, StateCha
 	public void removeMoveListener(MoveListener listener){
 		if (moveListeners != null)
 			moveListeners.remove(listener);
+	}
+	
+	public void removeAllMoveListeners(){
+		moveListeners.clear();
 	}
 	
 	private void notifyGameEnd(Status status){

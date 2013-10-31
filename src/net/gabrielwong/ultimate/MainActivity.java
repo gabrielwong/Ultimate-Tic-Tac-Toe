@@ -24,6 +24,7 @@ public class MainActivity extends BaseGameActivity implements
 	final String BACK_TAG = "asdf123";
 	
 	GameLogic logic = null;
+	AI ai = null;
 	
 	// Fragments
 	GameplayFragment mGameplayFragment = null;
@@ -70,7 +71,7 @@ public class MainActivity extends BaseGameActivity implements
 		logic.addStateChangeListener(mGameplayFragment);
 		mGameplayFragment.addMoveListener(logic);
 		
-		AI ai = new RandomAI();
+		ai = new RandomAI();
 		ai.setPlayerId(1);
 		ai.setMoveListener(logic);
 		logic.addStateChangeListener(ai);
@@ -143,7 +144,11 @@ public class MainActivity extends BaseGameActivity implements
 	@Override
 	public void onEndGame() {
 		mGameplayFragment.removeMoveListener(logic);
-		logic.removeAllListeners();
+		if (ai != null){
+			ai.setMoveListener(null);
+			ai = null;
+		}
+		logic = null;
 		getFragmentManager().popBackStack();
 	}
 
