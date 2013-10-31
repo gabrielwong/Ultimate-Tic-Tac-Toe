@@ -71,6 +71,7 @@ public class MultiplayerMenuFragment extends Fragment implements OnClickListener
 				false);
 		
 	    v.findViewById(R.id.local_multiplayer_button).setOnClickListener(this);
+	    v.findViewById(R.id.online_multiplayer_button).setOnClickListener(this);
 	    
 	    return v;
 	}
@@ -94,6 +95,7 @@ public class MultiplayerMenuFragment extends Fragment implements OnClickListener
 
 	public interface Listener {
 		public void onLocalMultiplayerButtonClicked();
+		public void onOnlineMultiplayerButtonClicked();
 	}
 
 	@Override
@@ -101,6 +103,9 @@ public class MultiplayerMenuFragment extends Fragment implements OnClickListener
 		switch(view.getId()){
 		case R.id.local_multiplayer_button:
 			mListener.onLocalMultiplayerButtonClicked();
+			break;
+		case R.id.online_multiplayer_button:
+			mListener.onOnlineMultiplayerButtonClicked();
 			break;
 		}
 	}

@@ -1,3 +1,4 @@
+
 package net.gabrielwong.ultimate;
 
 import net.gabrielwong.ultimate.game.AI;
@@ -42,12 +43,19 @@ public class MainActivity extends BaseGameActivity implements
             mMainFragment = new MainMenuFragment();
             mSettingsFragment = new SettingsFragment();
            
-            switchToFragment(mMainFragment);
+            switchToFragment(mMainFragment, false);
     }
 	
 	void switchToFragment(Fragment newFrag){
+		switchToFragment(newFrag, true);
+	}
+	
+	void switchToFragment(Fragment newFrag, boolean addToBackStack){
 		FragmentTransaction transaction = getFragmentManager().beginTransaction();
-		transaction.replace(R.id.fragment_container, newFrag).addToBackStack(null).commit();
+		transaction.replace(R.id.fragment_container, newFrag);
+		if (addToBackStack)
+			transaction.addToBackStack(null);
+		transaction.commit();
 	}
 	
 	void startLocalMultiplayerGame(){
@@ -117,7 +125,7 @@ public class MainActivity extends BaseGameActivity implements
 	@Override
 	public void onBackPressed(){
 		FragmentManager fm = getFragmentManager();
-		if (fm.getBackStackEntryCount() > 1)
+		if (fm.getBackStackEntryCount() > 0)
 			fm.popBackStack();
 		else
 			super.onBackPressed();
@@ -136,11 +144,17 @@ public class MainActivity extends BaseGameActivity implements
 	public void onEndGame() {
 		mGameplayFragment.removeMoveListener(logic);
 		logic.removeAllListeners();
-		switchToFragment(mMainFragment);
+		getFragmentManager().popBackStack();
 	}
 
 	@Override
 	public void onSingleplayerButtonClicked() {
 		startSingleplayerGame();
+	}
+
+	@Override
+	public void onOnlineMultiplayerButtonClicked() {
+		// TODO Auto-generated method stub
+		
 	}
 }

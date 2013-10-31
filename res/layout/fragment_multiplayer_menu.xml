@@ -18,5 +18,13 @@
         android:text="@string/local_multiplayer"
         android:textColor="#FFFFFF"
         android:textSize="20sp" />
+    
+    <Button
+        android:id="@+id/online_multiplayer_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:background="@drawable/button_red"
+        android:text="@string/online_multiplayer" />
 
 </LinearLayout>
