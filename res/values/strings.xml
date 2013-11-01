@@ -18,5 +18,7 @@
     <string name="online_multiplayer">Online</string>
     <string name="menu">Menu</string>
     <string name="undo">Undo</string>
+    <string name="resume">Resume</string>
+    <string name="main_menu">Main Menu</string>
 
 </resources>

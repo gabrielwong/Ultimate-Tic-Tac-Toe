@@ -13,7 +13,7 @@ import android.view.Menu;
 import com.google.example.games.basegameutils.BaseGameActivity;
 
 public class MainActivity extends BaseGameActivity implements
-	MainMenuFragment.Listener, MultiplayerMenuFragment.Listener, GameplayFragment.Listener{
+	MainMenuFragment.Listener, MultiplayerMenuFragment.Listener, GameplayFragment.Listener, PauseMenuFragment.Listener{
 	
 	// Debug stuff
 	final boolean ENABLE_DEBUG = true;
@@ -30,7 +30,8 @@ public class MainActivity extends BaseGameActivity implements
 	MultiplayerMenuFragment mMultiplayerFragment = null;
 	MainMenuFragment mMainFragment = null;
 	SettingsFragment mSettingsFragment = null;
-    
+    PauseMenuFragment mPauseFragment = null;
+	
 	@Override
     protected void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
@@ -42,6 +43,7 @@ public class MainActivity extends BaseGameActivity implements
             mMultiplayerFragment = new MultiplayerMenuFragment();
             mMainFragment = new MainMenuFragment();
             mSettingsFragment = new SettingsFragment();
+            mPauseFragment = new PauseMenuFragment();
            
             switchToFragment(mMainFragment, false);
     }
@@ -52,7 +54,10 @@ public class MainActivity extends BaseGameActivity implements
 	
 	void switchToFragment(Fragment newFrag, boolean addToBackStack){
 		FragmentTransaction transaction = getFragmentManager().beginTransaction();
-		transaction.replace(R.id.fragment_container, newFrag);
+		transaction.setCustomAnimations(
+                R.anim.card_flip_right_in, R.anim.card_flip_right_out,
+                R.anim.card_flip_left_in, R.anim.card_flip_left_out)
+                .replace(R.id.fragment_container, newFrag);
 		if (addToBackStack)
 			transaction.addToBackStack(null);
 		transaction.commit();
@@ -160,17 +165,23 @@ public class MainActivity extends BaseGameActivity implements
 
 	@Override
 	public void menuClick() {
-		FragmentTransaction transaction = getFragmentManager().beginTransaction();
-		transaction.setCustomAnimations(
-                R.anim.card_flip_right_in, R.anim.card_flip_right_out,
-                R.anim.card_flip_left_in, R.anim.card_flip_left_out)
-                .replace(R.id.fragment_container, mMainFragment)
-                .addToBackStack(null)
-                .commit();
+		switchToFragment(mPauseFragment);
 	}
 
 	@Override
 	public void undoClick() {
+		
+	}
+
+	@Override
+	public void onResumeButtonClicked() {
+		switchToFragment(mGameplayFragment);
+		
+	}
+
+	@Override
+	public void onMainMenuButtonClicked() {
+		switchToFragment(mMainFragment);
 		
 	}
 }
