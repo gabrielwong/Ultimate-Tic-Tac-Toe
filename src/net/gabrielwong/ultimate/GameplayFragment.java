@@ -21,6 +21,8 @@ import android.widget.FrameLayout.LayoutParams;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+// Code really needs to be cleaned....
+
 public class GameplayFragment extends Fragment implements MoveListener, StateChangeListener, OnClickListener{
 	
 	private BoardView view = null;
@@ -81,7 +83,6 @@ public class GameplayFragment extends Fragment implements MoveListener, StateCha
 			}
 		};
         
-        //frame = (FrameLayout) inflater.getContext().getResources().getLayout(R.id.game_frame);
 		frame = new FrameLayout(getActivity());
 		FrameLayout.LayoutParams frameParams = new FrameLayout.LayoutParams(
                 LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT);
@@ -198,9 +199,9 @@ public class GameplayFragment extends Fragment implements MoveListener, StateCha
 		switch(temporaryCount%2)
 		{
 		case 0:
-			backgroundTransition.startTransition(500);
-		case 1:
 			backgroundTransition.reverseTransition(500);
+		case 1:
+			backgroundTransition.startTransition(500);
 		}
 	}
 }
