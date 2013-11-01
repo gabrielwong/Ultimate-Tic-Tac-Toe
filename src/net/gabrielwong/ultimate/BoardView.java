@@ -17,7 +17,7 @@ import android.view.MotionEvent;
 import android.view.View;
 
 
-public class GameplayView extends View implements StateChangeListener{
+public class BoardView extends View implements StateChangeListener{
 
 	private GameState state = null;
 	private BoardRenderer renderer;
@@ -34,7 +34,7 @@ public class GameplayView extends View implements StateChangeListener{
 	
 	private MoveListener moveListener = null;
 	
-	public GameplayView(Context context) {
+	public BoardView(Context context) {
 		super(context);
 		
 		state = new GameState();

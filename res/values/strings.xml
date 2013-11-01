@@ -16,5 +16,7 @@
     <string name="achievements_not_available">Please sign in to view achievements.</string>
     <string name="singleplayer">Single Player</string>
     <string name="online_multiplayer">Online</string>
+    <string name="menu">Menu</string>
+    <string name="undo">Undo</string>
 
 </resources>

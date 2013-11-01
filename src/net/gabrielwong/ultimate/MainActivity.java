@@ -157,4 +157,20 @@ public class MainActivity extends BaseGameActivity implements
 		// TODO Auto-generated method stub
 		
 	}
+
+	@Override
+	public void menuClick() {
+		FragmentTransaction transaction = getFragmentManager().beginTransaction();
+		transaction.setCustomAnimations(
+                R.anim.card_flip_right_in, R.anim.card_flip_right_out,
+                R.anim.card_flip_left_in, R.anim.card_flip_left_out)
+                .replace(R.id.fragment_container, mMainFragment)
+                .addToBackStack(null)
+                .commit();
+	}
+
+	@Override
+	public void undoClick() {
+		
+	}
 }
