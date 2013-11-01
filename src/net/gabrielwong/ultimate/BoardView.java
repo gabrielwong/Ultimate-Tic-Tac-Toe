@@ -13,6 +13,7 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.graphics.drawable.Drawable;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -36,7 +37,6 @@ public class BoardView extends View implements StateChangeListener{
 	
 	public BoardView(Context context) {
 		super(context);
-		
 		state = new GameState();
 		renderer = new BoardRenderer(getContext());
 		initPaints();
@@ -54,7 +54,6 @@ public class BoardView extends View implements StateChangeListener{
 	protected void onDraw(Canvas canvas) {
 		// TODO Auto-generated method stub
 		super.onDraw(canvas);
-		
 		if (state.getBoard().hasActiveBoard()){
 			int row = GameLogic.getRow(state.getBoard().getActiveBoard());
 			int col = GameLogic.getCol(state.getBoard().getActiveBoard());
@@ -86,6 +85,7 @@ public class BoardView extends View implements StateChangeListener{
 	 */
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
+    	
 		if (event.getActionMasked() != MotionEvent.ACTION_DOWN)
 				return false;
 		Rect zoomedBounds = getZoomedBounds();

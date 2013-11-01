@@ -9,6 +9,7 @@ import net.gabrielwong.ultimate.game.event.StateChangeListener;
 import android.app.Activity;
 import android.app.Fragment;
 import android.graphics.PorterDuff.Mode;
+import android.graphics.drawable.TransitionDrawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,7 +27,6 @@ public class GameplayFragment extends Fragment implements MoveListener, StateCha
 	
 	private ArrayList<MoveListener> moveListeners = null;
 	private int buttonMargin = 100;
-	private int buttonPadding = 50;
 	private int buttonWidth;
 	private int buttonHeight;
 	private int navBarHeight = 96;
@@ -36,6 +36,10 @@ public class GameplayFragment extends Fragment implements MoveListener, StateCha
 	
 	Listener mListener = null;
 	
+	private int temporaryCount = 0;
+	private static View backBoard;
+	private TransitionDrawable backgroundTransition;
+	private FrameLayout frame;
 	private Button menuButton;
 	private Button undoButton;
 	private TextView centerView;
@@ -49,6 +53,11 @@ public class GameplayFragment extends Fragment implements MoveListener, StateCha
 	@Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
+		
+		backBoard = getActivity().findViewById(R.id.fragment_container);
+		backBoard.setBackgroundResource(R.drawable.background_transition);
+		backgroundTransition = (TransitionDrawable) backBoard.getBackground();
+		
         view = new BoardView(inflater.getContext());
         view.setMoveListener(this);
         
@@ -72,14 +81,18 @@ public class GameplayFragment extends Fragment implements MoveListener, StateCha
 			}
 		};
         
-        FrameLayout frame = new FrameLayout(getActivity());
+        //frame = (FrameLayout) inflater.getContext().getResources().getLayout(R.id.game_frame);
+		frame = new FrameLayout(getActivity());
 		FrameLayout.LayoutParams frameParams = new FrameLayout.LayoutParams(
                 LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT);
         frame.setLayoutParams(frameParams);
         frame.addView(view);
         
         LinearLayout buttonContainer = new LinearLayout(inflater.getContext());
-        buttonContainer.setPadding(buttonMargin, getActivity().getWindowManager().getDefaultDisplay().getHeight() - buttonHeight - navBarHeight, buttonMargin, 0);
+        buttonContainer.setPadding(buttonMargin, 
+        		getActivity().getWindowManager().getDefaultDisplay().getHeight() - buttonHeight - navBarHeight,
+        		buttonMargin,
+        		0);
         
         menuButton = new Button(getActivity());
         menuButton.setText("Menu");
@@ -96,9 +109,15 @@ public class GameplayFragment extends Fragment implements MoveListener, StateCha
         centerView = new TextView(getActivity());
         centerView.setText(" ");
         
-        LinearLayout.LayoutParams menuParam = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        LinearLayout.LayoutParams undoParam = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        LinearLayout.LayoutParams centerParam = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        LinearLayout.LayoutParams menuParam = new LinearLayout.LayoutParams(
+        		LinearLayout.LayoutParams.WRAP_CONTENT,
+        		LinearLayout.LayoutParams.WRAP_CONTENT);
+        LinearLayout.LayoutParams undoParam = new LinearLayout.LayoutParams(
+        		LinearLayout.LayoutParams.WRAP_CONTENT, 
+        		LinearLayout.LayoutParams.WRAP_CONTENT);
+        LinearLayout.LayoutParams centerParam = new LinearLayout.LayoutParams(
+        		LinearLayout.LayoutParams.WRAP_CONTENT, 
+        		LinearLayout.LayoutParams.WRAP_CONTENT);
         menuParam.width =  buttonWidth;
         centerParam.width = buttonWidth;
         undoParam.width = buttonWidth;
@@ -110,6 +129,9 @@ public class GameplayFragment extends Fragment implements MoveListener, StateCha
         buttonContainer.addView(centerView, centerParam);
         buttonContainer.addView(undoButton, undoParam);
         frame.addView(buttonContainer);
+        
+        frame.setTag("GAMEFRAME");
+        
         return frame;
     }
 	
@@ -145,6 +167,8 @@ public class GameplayFragment extends Fragment implements MoveListener, StateCha
 	@Override
 	public void movePerformed(MoveEvent event) {
 		sendMoveEvent(event);
+		updateBackColor();
+		temporaryCount++;
 	}
 	
 	public void addMoveListener(MoveListener listener){
@@ -167,5 +191,16 @@ public class GameplayFragment extends Fragment implements MoveListener, StateCha
 	public void onClick(View v) {
 		// TODO Auto-generated method stub
 		return;
+	}
+	
+	public void updateBackColor()
+	{
+		switch(temporaryCount%2)
+		{
+		case 0:
+			backgroundTransition.startTransition(500);
+		case 1:
+			backgroundTransition.reverseTransition(500);
+		}
 	}
 }
