@@ -1,6 +1,7 @@
 package net.gabrielwong.ultimate;
 import java.util.ArrayList;
 
+import net.gabrielwong.ultimate.game.GameState;
 import net.gabrielwong.ultimate.game.Status;
 import net.gabrielwong.ultimate.game.event.MoveEvent;
 import net.gabrielwong.ultimate.game.event.MoveListener;
@@ -8,43 +9,30 @@ import net.gabrielwong.ultimate.game.event.StateChangeEvent;
 import net.gabrielwong.ultimate.game.event.StateChangeListener;
 import android.app.Activity;
 import android.app.Fragment;
-import android.graphics.PorterDuff.Mode;
 import android.graphics.drawable.TransitionDrawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.FrameLayout.LayoutParams;
-import android.widget.LinearLayout;
-import android.widget.TextView;
 
 // Code really needs to be cleaned....
 
-public class GameplayFragment extends Fragment implements MoveListener, StateChangeListener, OnClickListener{
+public class GameplayFragment extends Fragment implements MoveListener, StateChangeListener,
+	OnClickListener{
 	
-	private BoardView view = null;
+	private BoardView boardView = null;
 	
 	private ArrayList<MoveListener> moveListeners = null;
-	private int buttonMargin = 100;
-	private int buttonWidth;
-	private int buttonHeight;
-	private int navBarHeight = 96;
-	
-	private static final int blue = 0xFF33B5E5;
-	private static final int red = 0xFFFF4444;
-	
+
 	Listener mListener = null;
-	
-	private int temporaryCount = 0;
+
 	private static View backBoard;
 	private TransitionDrawable backgroundTransition;
 	private FrameLayout frame;
-	private Button menuButton;
-	private Button undoButton;
-	private TextView centerView;
+	private View buttonView;
 	
 	public interface Listener{
 		public void onEndGame();
@@ -60,78 +48,21 @@ public class GameplayFragment extends Fragment implements MoveListener, StateCha
 		backBoard.setBackgroundResource(R.drawable.background_transition);
 		backgroundTransition = (TransitionDrawable) backBoard.getBackground();
 		
-        view = new BoardView(inflater.getContext());
-        view.setMoveListener(this);
-        
-        buttonWidth = (getActivity().getWindowManager().getDefaultDisplay().getWidth() - buttonMargin*2 )/3;
-        buttonHeight = buttonWidth/4;
-        
-        View.OnClickListener menuEvent = new View.OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				// TODO Auto-generated method stub
-				mListener.menuClick();
-			}
-		};
-    
-		View.OnClickListener undoEvent = new View.OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				mListener.undoClick();
-			}
-		};
+		buttonView = inflater.inflate(R.layout.view_game_button, container, false);
+		
+        boardView = new BoardView(inflater.getContext());
+        boardView.setMoveListener(this);
         
 		frame = new FrameLayout(getActivity());
 		FrameLayout.LayoutParams frameParams = new FrameLayout.LayoutParams(
-                LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT);
+                LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
+		
         frame.setLayoutParams(frameParams);
-        frame.addView(view);
+        frame.addView(boardView);
+        frame.addView(buttonView);
         
-        LinearLayout buttonContainer = new LinearLayout(inflater.getContext());
-        buttonContainer.setPadding(buttonMargin, 
-        		getActivity().getWindowManager().getDefaultDisplay().getHeight() - buttonHeight - navBarHeight,
-        		buttonMargin,
-        		0);
-        
-        menuButton = new Button(getActivity());
-        menuButton.setText("Menu");
-        menuButton.setWidth(buttonWidth);
-        menuButton.setHeight(buttonHeight);
-        menuButton.getBackground().setColorFilter(blue, Mode.MULTIPLY);
-        
-        undoButton = new Button(getActivity());
-        undoButton.setText("Undo");
-        undoButton.setWidth(buttonWidth);
-        undoButton.setHeight(buttonHeight);
-        undoButton.getBackground().setColorFilter(red, Mode.MULTIPLY);
-        
-        centerView = new TextView(getActivity());
-        centerView.setText(" ");
-        
-        LinearLayout.LayoutParams menuParam = new LinearLayout.LayoutParams(
-        		LinearLayout.LayoutParams.WRAP_CONTENT,
-        		LinearLayout.LayoutParams.WRAP_CONTENT);
-        LinearLayout.LayoutParams undoParam = new LinearLayout.LayoutParams(
-        		LinearLayout.LayoutParams.WRAP_CONTENT, 
-        		LinearLayout.LayoutParams.WRAP_CONTENT);
-        LinearLayout.LayoutParams centerParam = new LinearLayout.LayoutParams(
-        		LinearLayout.LayoutParams.WRAP_CONTENT, 
-        		LinearLayout.LayoutParams.WRAP_CONTENT);
-        menuParam.width =  buttonWidth;
-        centerParam.width = buttonWidth;
-        undoParam.width = buttonWidth;
-        
-        menuButton.setOnClickListener(menuEvent);
-        undoButton.setOnClickListener(undoEvent);
-        
-        buttonContainer.addView(menuButton, menuParam);
-        buttonContainer.addView(centerView, centerParam);
-        buttonContainer.addView(undoButton, undoParam);
-        frame.addView(buttonContainer);
-        
-        frame.setTag("GAMEFRAME");
+        buttonView.findViewById(R.id.menu_button).setOnClickListener(this);
+        buttonView.findViewById(R.id.undo_button).setOnClickListener(this);
         
         return frame;
     }
@@ -154,8 +85,9 @@ public class GameplayFragment extends Fragment implements MoveListener, StateCha
 
 	@Override
 	public void stateChanged(StateChangeEvent event) {
-		view.stateChanged(event);
+		boardView.stateChanged(event);
 		Status status = event.getState().getStatus();
+		updateBackgroundColor(event.getState());
 		if (status != Status.PLAYABLE && status != null)
 			notifyGameEnd(status);
 	}
@@ -168,8 +100,6 @@ public class GameplayFragment extends Fragment implements MoveListener, StateCha
 	@Override
 	public void movePerformed(MoveEvent event) {
 		sendMoveEvent(event);
-		updateBackColor();
-		temporaryCount++;
 	}
 	
 	public void addMoveListener(MoveListener listener){
@@ -190,18 +120,27 @@ public class GameplayFragment extends Fragment implements MoveListener, StateCha
 
 	@Override
 	public void onClick(View v) {
-		// TODO Auto-generated method stub
+		switch(v.getId())
+		{
+		case R.id.menu_button:
+			mListener.menuClick();
+			return;
+		case R.id.undo_button:
+			mListener.undoClick();
+			return;
+		}
 		return;
 	}
 	
-	public void updateBackColor()
+	public void updateBackgroundColor(GameState state)
 	{
-		switch(temporaryCount%2)
+		int playerId = state.getPlayerId();
+		switch(playerId)
 		{
 		case 0:
-			backgroundTransition.reverseTransition(500);
-		case 1:
 			backgroundTransition.startTransition(500);
+		case 1:
+			backgroundTransition.reverseTransition(500);
 		}
 	}
 }

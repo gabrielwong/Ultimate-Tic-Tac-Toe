@@ -11,75 +11,42 @@
 
     <Button
         android:id="@+id/singleplayer_button"
-		android:layout_width="150dp"
-        android:layout_height="40dp"
-        android:layout_gravity="center"
-        android:layout_margin="10dp"
-        android:background="@drawable/button_blue"
-        android:text="@string/singleplayer"
-        android:textColor="#FFFFFF" 
-        android:textSize="20sp"/>
+        style="@style/Button.Blue"
+        android:text="@string/singleplayer" />
 
     <!-- Multiplayer button -->
 
     <Button
         android:id="@+id/multiplayer_button"
-        android:layout_width="150dp"
-        android:layout_height="40dp"
-        android:layout_gravity="center"
-        android:layout_margin="10dp"
-        android:background="@drawable/button_green"
-        android:text="@string/multiplayer"
-        android:textColor="#FFFFFF"
-        android:textSize="20sp" />
+        style="@style/Button.Green"
+        android:text="@string/multiplayer" />
 
     <!-- Settings button -->
 
     <Button
         android:id="@+id/settings_button"
-        android:layout_width="150dp"
-        android:layout_height="40dp"
-        android:layout_gravity="center"
-        android:layout_margin="10dp"
-        android:background="@drawable/button_orange"
-        android:text="@string/settings"
-        android:textColor="#FFFFFF"
-        android:textSize="20sp" />
+        style="@style/Button.Orange"
+        android:text="@string/settings" />
 
     <!-- Achievements button -->
 
     <Button
         android:id="@+id/achievements_button"
-        android:layout_width="150dp"
-        android:layout_height="40dp"
-        android:layout_gravity="center"
-        android:layout_margin="10dp"
-        android:background="@drawable/button_purple"
-        android:text="@string/achievements"
-        android:textColor="#FFFFFF"
-        android:textSize="20sp" />
+        style="@style/Button.Purple"
+        android:text="@string/achievements" />
 
     <!-- sign-in button -->
 
     <com.google.android.gms.common.SignInButton
         android:id="@+id/sign_in_button"
-        android:layout_width="150dp"
-        android:layout_height="40dp"
-        android:layout_gravity="center"
-        android:layout_margin="10dp" />
+        style="@style/Button" />
 
     <!-- sign-out button -->
 
     <Button
         android:id="@+id/sign_out_button"
-        android:layout_width="150dp"
-        android:layout_height="40dp"
-        android:layout_gravity="center"
-        android:layout_margin="10dp"
-        android:background="@drawable/button_red"
+        style="@style/Button.Red"
         android:text="@string/sign_out"
-        android:textSize="20sp"
-        android:textColor="#FFFFFF"
         android:visibility="gone" />
 
 </LinearLayout>

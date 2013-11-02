@@ -11,39 +11,21 @@
 
     <Button
         android:id="@+id/resume_button"
-        android:layout_width="150dp"
-        android:layout_height="40dp"
-        android:layout_gravity="center"
-        android:layout_margin="10dp"
-        android:background="@drawable/button_green"
-        android:text="@string/resume"
-        android:textColor="#FFFFFF"
-        android:textSize="20sp" />
+        style="@style/Button.Green"
+        android:text="@string/resume" />
 
     <!-- Settings button -->
 
     <Button
         android:id="@id/settings_button"
-        android:layout_width="150dp"
-        android:layout_height="40dp"
-        android:layout_gravity="center"
-        android:layout_margin="10dp"
-        android:background="@drawable/button_orange"
-        android:text="@string/settings"
-        android:textColor="#FFFFFF"
-        android:textSize="20sp" />
+        style="@style/Button.Orange"
+        android:text="@string/settings" />
 
     <!-- Achievements button -->
 
     <Button
         android:id="@+id/main_menu_button"
-        android:layout_width="150dp"
-        android:layout_height="40dp"
-        android:layout_gravity="center"
-        android:layout_margin="10dp"
-        android:background="@drawable/button_purple"
-        android:text="@string/main_menu"
-        android:textColor="#FFFFFF"
-        android:textSize="20sp" />
+        style="@style/Button.Purple"
+        android:text="@string/main_menu" />
 
 </LinearLayout>

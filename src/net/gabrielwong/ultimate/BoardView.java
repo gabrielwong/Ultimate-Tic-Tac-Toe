@@ -55,13 +55,7 @@ public class BoardView extends View implements StateChangeListener{
 		// TODO Auto-generated method stub
 		super.onDraw(canvas);
 		if (state.getBoard().hasActiveBoard()){
-			int row = GameLogic.getRow(state.getBoard().getActiveBoard());
-			int col = GameLogic.getCol(state.getBoard().getActiveBoard());
-			Rect activeBounds = new Rect(col * getWidth() / Board.SIDE_LENGTH,
-										 row * getWidth() / Board.SIDE_LENGTH,
-										 (col + 1) * getWidth() / Board.SIDE_LENGTH,
-										 (row + 1) * getWidth() / Board.SIDE_LENGTH);
-			canvas.drawRect(activeBounds, activePaint);
+			renderer.drawActiveBoard(canvas, state);
 		}
 		
 		renderer.drawBigBoard(canvas, state.getBoard());

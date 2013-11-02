@@ -11,20 +11,12 @@
 
     <Button
         android:id="@+id/local_multiplayer_button"
-		android:layout_width="150dp"
-        android:layout_height="40dp"
-        android:layout_gravity="center"
-        android:background="@drawable/button_blue"
-        android:text="@string/local_multiplayer"
-        android:textColor="#FFFFFF"
-        android:textSize="20sp" />
-    
+        style="@style/Button.Blue"
+        android:text="@string/local_multiplayer" />
+
     <Button
         android:id="@+id/online_multiplayer_button"
-        android:layout_width="150dp"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:background="@drawable/button_red"
+        style="@style/Button.Red"
         android:text="@string/online_multiplayer" />
 
 </LinearLayout>

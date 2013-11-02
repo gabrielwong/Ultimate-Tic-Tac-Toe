@@ -4,19 +4,22 @@ import net.gabrielwong.ultimate.R;
 import net.gabrielwong.ultimate.game.BigBoard;
 import net.gabrielwong.ultimate.game.Board;
 import net.gabrielwong.ultimate.game.GameLogic;
+import net.gabrielwong.ultimate.game.GameState;
 import net.gabrielwong.ultimate.game.Status;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Paint;
 import android.graphics.Rect;
-import android.graphics.drawable.Drawable;
 
 public class BoardRenderer {
 	
 	private Context context = null;
 	private static Bitmap[] statusBitmaps;
 	private static Bitmap background;
+	private final static int COLOR_PLAYER1 = 0xFFD3E992;
+	private final static int COLOR_PLAYER0 = 0xFFFFAFAF;
 	
 	public BoardRenderer(Context context){
 		this.context = context;
@@ -112,11 +115,6 @@ public class BoardRenderer {
 		drawBigBoard(canvas, bigboard, 0, 0, size, size);
 	}
 	
-	public void drawFocusBoard(Canvas canvas, Status status)
-	{
-		
-	}
-	
 	/**
 	 * Returns the bounds for a Drawable at index.
 	 * @param left
@@ -135,4 +133,31 @@ public class BoardRenderer {
 						left + (col + 1) * squareWidth,
 						top + (row + 1) *squareHeight);
 	}
+	
+	public void drawActiveBoard(Canvas canvas, GameState state)
+	{
+		
+		int row = GameLogic.getRow(state.getBoard().getActiveBoard());
+		int col = GameLogic.getCol(state.getBoard().getActiveBoard());
+		Rect activeBounds = new Rect(col * canvas.getWidth() / Board.SIDE_LENGTH,
+									 row * canvas.getWidth() / Board.SIDE_LENGTH,
+									 (col + 1) * canvas.getWidth() / Board.SIDE_LENGTH,
+									 (row + 1) * canvas.getWidth() / Board.SIDE_LENGTH);
+		canvas.drawRect(activeBounds, getPlayerColor(state));
+	}
+	
+	private Paint getPlayerColor(GameState state)
+	{
+		Paint color = new Paint();
+		int playerId = state.getPlayerId();
+		switch(playerId)
+		{
+		case 0:
+			color.setColor(COLOR_PLAYER0);
+		case 1:
+			color.setColor(COLOR_PLAYER1);
+		}
+		return color;
+	}
+	
 }
